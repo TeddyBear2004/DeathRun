@@ -1,0 +1,7 @@
+maxtime: 120
+
+worlds:
+  world:
+    name: deathrun1
+    biome: ""
+    width: 100

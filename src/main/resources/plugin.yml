@@ -1,0 +1,26 @@
+name: Deathrun
+version: '${project.version}'
+main: de.thorge.deathrun.Deathrun
+api-version: '1.20'
+
+commands:
+  start:
+    description: Start a new game
+    usage: /<command>
+    permission: deathrun.start
+  stop:
+    description: Stop the current game
+    usage: /<command>
+    permission: deathrun.stop
+  load:
+    description: Load a new map
+    usage: /<command> <mapname>
+    permission: deathrun.load
+  spectate:
+    description: Spectate the current game
+    usage: /<command>
+    permission: deathrun.spectate
+  reset:
+    description: Reset the current game
+    usage: /<command>
+    permission: deathrun.reset
