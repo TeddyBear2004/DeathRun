@@ -41,7 +41,7 @@ public class DeathRunWorld {
     private void generateWorld(@Nullable Biome biome, String worldName) {
         WorldCreator worldCreator = new WorldCreator(worldName);
         if (biome != null) {
-            new BiomeProvider() {
+            BiomeProvider biomeProvider = new BiomeProvider() {
                 @Override
                 public @NotNull Biome getBiome(@NotNull WorldInfo worldInfo, int i, int i1, int i2) {
                     return biome;
@@ -52,6 +52,8 @@ public class DeathRunWorld {
                     return List.of(biome);
                 }
             };
+
+            worldCreator.biomeProvider(biomeProvider);
         }
         this.world = worldCreator.createWorld();
     }
@@ -68,6 +70,7 @@ public class DeathRunWorld {
         Bukkit.getOnlinePlayers().forEach(player -> {
             player.teleport(spawnLocation);
             player.setGameMode(GameMode.SURVIVAL);
+            player.getInventory().clear();
 
             WorldBorder worldBorder = Bukkit.createWorldBorder();
             worldBorder.setSize(borderSize);
@@ -79,14 +82,18 @@ public class DeathRunWorld {
         });
 
     }
-
+    private boolean running = false;
     public void start() {
+        running = true;
+
         this.timer.start();
         this.bossBar.start();
         this.scoreBoard.start();
     }
 
     public void stop() {
+        running = true;
+
         this.timer.stop();
         this.bossBar.stop();
         this.scoreBoard.stop();
@@ -118,6 +125,9 @@ public class DeathRunWorld {
             Bukkit.broadcast(message);
 
         } else {
+            if(!running)
+                return;
+
             getPlayers().forEach(player -> {
                 WorldBorder worldBorder = worldBorders.get(player);
                 if (worldBorder == null)
