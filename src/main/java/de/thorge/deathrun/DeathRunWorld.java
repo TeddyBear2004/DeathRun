@@ -71,6 +71,10 @@ public class DeathRunWorld {
             player.teleport(spawnLocation);
             player.setGameMode(GameMode.SURVIVAL);
             player.getInventory().clear();
+            player.setHealth(20);
+            player.setFoodLevel(20);
+            player.setSaturation(20);
+            player.getEnderChest().clear();
 
             WorldBorder worldBorder = Bukkit.createWorldBorder();
             worldBorder.setSize(borderSize);
