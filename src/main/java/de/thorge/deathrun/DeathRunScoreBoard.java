@@ -20,7 +20,7 @@ import java.util.*;
 public class DeathRunScoreBoard {
     private final Plugin plugin;
     private final DeathRunWorld deathRunWorld;
-    private final PersistentDataContainer dataContainer;
+    private PersistentDataContainer dataContainer;
     private final Map<Player, Scoreboard> playerScoreboards = new HashMap<>();
     private boolean running = false;
 
@@ -41,6 +41,12 @@ public class DeathRunScoreBoard {
         }
     }
 
+    public void reset(){
+        playerScoreboards.clear();
+
+        this.dataContainer = deathRunWorld.getWorld().getPersistentDataContainer();
+    }
+
     public void tick() {
 
         if (!running) {
@@ -55,7 +61,13 @@ public class DeathRunScoreBoard {
     }
 
     private Scoreboard createScoreboard(Player player) {
-        return playerScoreboards.computeIfAbsent(player, k -> Bukkit.getScoreboardManager().getNewScoreboard());
+        Scoreboard scoreboard = playerScoreboards.computeIfAbsent(player,
+                k -> Bukkit.getScoreboardManager().getNewScoreboard());
+
+        if (!scoreboard.equals(player.getScoreboard())) {
+            player.setScoreboard(scoreboard);
+        }
+        return scoreboard;
     }
 
     private Objective getOrCreateDistanceObjective(Scoreboard scoreboard) {
@@ -74,21 +86,17 @@ public class DeathRunScoreBoard {
     }
 
     private void registerTeamsAndSetScores(Scoreboard scoreboard, Objective objective, List<Map.Entry<String, Double>> sortedDistances) {
-        for (Team team : scoreboard.getTeams()) {
-            team.unregister();
-        }
-
         int count = 0;
         for (Map.Entry<String, Double> entry : sortedDistances) {
-            if (count >= 10) {
-                break;
-            }
             String playerName = entry.getKey();
             double playerScore = entry.getValue();
 
             if (playerName == null)
                 continue;
-            Team team = scoreboard.registerNewTeam(playerName);
+            Team team = scoreboard.getTeam(playerName);
+            if (team == null)
+                team = scoreboard.registerNewTeam(playerName);
+
             team.addEntry(playerName);
 
             Score playerScoreObj = objective.getScore(playerName);
@@ -151,7 +159,6 @@ public class DeathRunScoreBoard {
 
     public void updateSidebar(Player player) {
         Scoreboard scoreboard = createScoreboard(player);
-        player.setScoreboard(scoreboard);
 
         Objective objective = getOrCreateDistanceObjective(scoreboard);
 

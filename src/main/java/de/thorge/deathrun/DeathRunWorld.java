@@ -86,7 +86,13 @@ public class DeathRunWorld {
         });
 
     }
+
     private boolean running = false;
+
+    public boolean isRunning() {
+        return running;
+    }
+
     public void start() {
         running = true;
 
@@ -129,7 +135,7 @@ public class DeathRunWorld {
             Bukkit.broadcast(message);
 
         } else {
-            if(!running)
+            if (!running)
                 return;
 
             getPlayers().forEach(player -> {
@@ -159,7 +165,6 @@ public class DeathRunWorld {
     }
 
     public void reset() {
-        this.timer.reset();
         this.bossBar.stop();
         this.scoreBoard.stop();
 
@@ -180,6 +185,8 @@ public class DeathRunWorld {
         deleteWorld(worldFolder);
 
         generateWorld(biome, worldName);
+        this.scoreBoard.reset();
+        this.timer.reset();
     }
 
     private void deleteWorld(File worldFolder) {
